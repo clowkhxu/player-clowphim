@@ -44,43 +44,46 @@ if (!SECRET_KEY || SECRET_KEY.length !== 16) {
 }
 
 // API endpoint để mã hóa link
-app.post('/api/encrypt', (req, res) => {
-  const { data } = req.body;
+// API endpoint để giải mã link
+app.post('/api/decrypt', (req, res) => {
+    const { encryptedData } = req.body;
+    
+    if (!encryptedData) {
+      return res.status(400).json({ error: 'Thiếu dữ liệu cần giải mã' });
+    }
   
-  if (!data) {
-    return res.status(400).json({ error: 'Thiếu dữ liệu cần mã hóa' });
-  }
-
-  try {
-    // Tạo IV ngẫu nhiên
-    const iv = crypto.randomBytes(16);
-    
-    // Tạo cipher
-    const cipher = crypto.createCipheriv('aes-128-cbc', Buffer.from(SECRET_KEY), iv);
-    
-    // Mã hóa dữ liệu
-    let encrypted = cipher.update(data, 'utf8', 'base64');
-    encrypted += cipher.final('base64');
-    
-    // Trả về IV và dữ liệu đã mã hóa
-    const ivBase64 = iv.toString('base64')
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=+$/, "");
-    
-    const encryptedBase64 = encrypted
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=+$/, "");
-    
-    return res.json({ 
-      encodedLink: `${ivBase64}.${encryptedBase64}`
-    });
-  } catch (error) {
-    console.error('Lỗi mã hóa:', error);
-    return res.status(500).json({ error: 'Lỗi khi mã hóa dữ liệu' });
-  }
-});
+    try {
+      // Tách IV và dữ liệu đã mã hóa
+      const parts = encryptedData.split(".");
+      if (parts.length !== 2) {
+        return res.status(400).json({ error: 'Định dạng dữ liệu mã hóa không hợp lệ' });
+      }
+      
+      // Giải mã base64url
+      let ivBase64 = parts[0].replace(/-/g, "+").replace(/_/g, "/");
+      while (ivBase64.length % 4 !== 0) ivBase64 += "=";
+      
+      let encryptedBase64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+      while (encryptedBase64.length % 4 !== 0) encryptedBase64 += "=";
+      
+      // Chuyển đổi thành Buffer
+      const iv = Buffer.from(ivBase64, 'base64');
+      const encryptedBuffer = Buffer.from(encryptedBase64, 'base64');
+      
+      // Tạo decipher
+      const decipher = crypto.createDecipheriv('aes-128-cbc', Buffer.from(SECRET_KEY), iv);
+      
+      // Giải mã dữ liệu
+      let decrypted = decipher.update(encryptedBuffer, 'binary', 'utf8');
+      decrypted += decipher.final('utf8');
+      
+      return res.json({ decryptedUrl: decrypted });
+    } catch (error) {
+      console.error('Lỗi giải mã:', error);
+      return res.status(500).json({ error: 'Lỗi khi giải mã dữ liệu' });
+    }
+  });
+  
 
 // Health check endpoint
 app.get('/health', (req, res) => {
