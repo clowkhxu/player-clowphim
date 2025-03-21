@@ -91,7 +91,7 @@ app.get('/health', (req, res) => {
 
 // Xử lý 404
 app.use((req, res) => {
-  res.status(404).json({ error: 'Đừng cố tìm cách nữa anh bạn à!' });
+  res.status(404).json({ error: 'Nia Nia Mì Ni Sầm Phân Nua!' });
 });
 
 // Xử lý lỗi
