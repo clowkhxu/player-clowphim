@@ -15,7 +15,7 @@ app.use(cors({
     // Cho phép requests không có origin (như mobile apps hoặc curl)
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'CORS policy không cho phép truy cập từ origin này.';
+      const msg = 'Đừng cố tìm cách nữa anh bạn à.';
       return callback(new Error(msg), false);
     }
     return callback(null, true);
@@ -30,7 +30,7 @@ const limiter = rateLimit({
   max: 100, // giới hạn mỗi IP tối đa 100 requests trong 15 phút
   standardHeaders: true,
   legacyHeaders: false,
-  message: 'Quá nhiều yêu cầu từ IP này, vui lòng thử lại sau 15 phút'
+  message: 'ZZZZZZZZZZ'
 });
 
 app.use('/api/', limiter);
@@ -39,13 +39,12 @@ app.use('/api/', limiter);
 const SECRET_KEY = process.env.SECRET_KEY;
 
 if (!SECRET_KEY || SECRET_KEY.length !== 16) {
-  console.error('Lỗi: SECRET_KEY phải có đúng 16 ký tự cho AES-128-CBC');
   process.exit(1);
 }
 
 // API endpoint để mã hóa link
 // API endpoint để giải mã link
-app.post('/api/decrypt', (req, res) => {
+app.post('/api/concunhonho', (req, res) => {
     const { encryptedData } = req.body;
     
     if (!encryptedData) {
@@ -92,7 +91,7 @@ app.get('/health', (req, res) => {
 
 // Xử lý 404
 app.use((req, res) => {
-  res.status(404).json({ error: 'Endpoint không tồn tại' });
+  res.status(404).json({ error: 'Đừng cố tìm cách nữa anh bạn à!' });
 });
 
 // Xử lý lỗi
