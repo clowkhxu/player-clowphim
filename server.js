@@ -12,7 +12,7 @@ app.set('trust proxy', true);
 
 // Thiết lập CORS - chỉ cho phép các domain cụ thể
 const allowedOrigins = [
-  'https://demo.clow.fun/',
+  'https://demo.clow.fun',
   'https://rcp-clowphim.blogspot.com'
 ];
 
