@@ -114,16 +114,31 @@ app.post('/api/concunhonho', (req, res) => {
   }
 });
 
-// API endpoint để bao bọc API Google Sheet
+// API endpoint để bao bọc API Google Sheet cho phim lẻ
 app.get('/api/phim-le', async (req, res) => {
+  const limit = req.query.limit || 24; // Lấy tham số limit từ query, mặc định là 24
   try {
-    const response = await axios.get('https://script.google.com/macros/s/AKfycbyXpNgnwvaN6baRAChhT1J4asIthVxQlsWzxMPvfuEGMHEOiToP5uhfN3jvg6XMf12I5A/exec?path=danh-sach/phim-le');
+    const response = await axios.get(`https://script.google.com/macros/echo?user_content_key=AehSKLg4QGreXdQf8IVsI410SNczl4tzhSlUfvgu7U4XfpxcRE-34OV0qCKxGXRuhKxhqX8SqP4-wdDsnb-HhjOItsRL8H1gniqFZAdaJwyEEof8bIjgyfBHuuUNynCPcFiMaVE3OI9bbM1CAyQC9iJA2n5fN5WC1CiKKpSBoIWWhH2gPX86Twafaii8MQRlqDXRqHGSlzg1e5EqD_cicS9MOfx673KDLEyfUFSU2Rtj5UU1VJY0Yx9YW3RKJ79T_Gl3iW7D4Oy7qfYBaMl8imjOS6wkhbnOPqrWBPOYv0QAxHUYZJZV09Yk2DiRPOB-rimwHpac6hFZ4ns-8A2fZEQ&lib=MZlMauPIZAmGYwUUgq90_C5EAwAXbS11g&limit=${limit}`);
     
     // Trả về dữ liệu từ Google Sheet
     return res.json(response.data);
   } catch (error) {
     console.error('Lỗi khi gọi API Google Sheet:', error);
     return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu phim lẻ' });
+  }
+});
+
+// API endpoint để bao bọc API Google Sheet cho phim bộ
+app.get('/api/phim-bo', async (req, res) => {
+  const limit = req.query.limit || 24; // Lấy tham số limit từ query, mặc định là 24
+  try {
+    const response = await axios.get(`https://script.google.com/macros/s/AKfycbzpvyXYoTtnoJUd4-kipStvBcHu4XPwkbzTahHBIX3L4mhE5Uzzd312kEa2DNZI0IpmUA/exec?path=danh-sach/phim-bo&limit=${limit}`);
+    
+    // Trả về dữ liệu từ Google Sheet
+    return res.json(response.data);
+  } catch (error) {
+    console.error('Lỗi khi gọi API Google Sheet:', error);
+    return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu phim bộ' });
   }
 });
 
