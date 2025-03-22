@@ -7,6 +7,9 @@ const axios = require('axios');
 
 const app = express();
 
+// Thêm dòng này để tin tưởng proxy
+app.set('trust proxy', true);
+
 // Thiết lập CORS - chỉ cho phép các domain cụ thể
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',')
