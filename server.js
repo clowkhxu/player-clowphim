@@ -15,7 +15,6 @@ const allowedOrigins = ['https://demo.clow.fun'];
 
 app.use(cors({
   origin: function(origin, callback) {
-    // Chỉ cho phép yêu cầu từ domain cụ thể
     if (allowedOrigins.indexOf(origin) === -1) {
       const msg = 'Domain không được phép truy cập.';
       return callback(new Error(msg), false);
