@@ -149,6 +149,20 @@ app.get('/api/phim-bo', async (req, res) => {
   }
 });
 
+// API endpoint để lấy thông tin phim theo slug
+app.get('/api/phim/:slug', async (req, res) => {
+  const slug = req.params.slug; // Lấy slug từ URL
+  try {
+    const response = await axios.get(`https://script.google.com/macros/s/AKfycbyR0NYcwIcUlBo2nJA-N95hhbg58YoLUi6V8eb3PQg_yhvX_SBhPgxusfBDdJJ5BKFJzw/exec?path=phim/${slug}`);
+    
+    // Trả về dữ liệu từ Google Sheet
+    return res.json(response.data);
+  } catch (error) {
+    console.error('Lỗi khi gọi API Google Sheet:', error);
+    return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu phim' });
+  }
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK' });
