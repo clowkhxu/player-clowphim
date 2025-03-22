@@ -4,6 +4,7 @@ const cors = require('cors');
 const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
 const axios = require('axios');
+const helmet = require('helmet');
 
 const app = express();
 
@@ -150,8 +151,18 @@ app.get('/api/phim-bo', async (req, res) => {
   }
 });
 
+// Middleware kiểm tra CORS cho endpoint phim
+const corsForPhim = (req, res, next) => {
+  const origin = req.headers.origin;
+  if (!origin) return res.status(403).json({ error: 'Không có origin' }); // Không có origin
+  if (allowedOrigins.indexOf(origin) === -1) {
+    return res.status(403).json({ error: 'Domain không được phép truy cập.' }); // Domain không hợp lệ
+  }
+  next(); // Cho phép tiếp tục nếu domain hợp lệ
+};
+
 // API endpoint để lấy thông tin phim theo slug
-app.get('/api/phim/:slug', async (req, res) => {
+app.get('/api/phim/:slug', corsForPhim, async (req, res) => {
   const slug = req.params.slug; // Lấy slug từ URL
   try {
     const response = await axios.get(`https://script.google.com/macros/s/AKfycbyR0NYcwIcUlBo2nJA-N95hhbg58YoLUi6V8eb3PQg_yhvX_SBhPgxusfBDdJJ5BKFJzw/exec?path=phim/${slug}`);
@@ -179,6 +190,9 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Lỗi server' });
 });
+
+app.use(helmet());
+app.use(helmet.referrerPolicy({ policy: 'no-referrer' }));
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
