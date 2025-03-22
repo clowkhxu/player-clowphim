@@ -10,8 +10,11 @@ const app = express();
 // Thêm dòng này để tin tưởng proxy
 app.set('trust proxy', true);
 
-// Thiết lập CORS - chỉ cho phép domain https://demo.clow.fun/
-const allowedOrigins = ['https://demo.clow.fun'];
+// Thiết lập CORS - chỉ cho phép các domain cụ thể
+const allowedOrigins = [
+  'https://demo.clow.fun/',
+  'https://rcp-clowphim.blogspot.com'
+];
 
 app.use(cors({
   origin: function(origin, callback) {
