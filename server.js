@@ -10,16 +10,14 @@ const app = express();
 // Thêm dòng này để tin tưởng proxy
 app.set('trust proxy', true);
 
-// Thiết lập CORS - chỉ cho phép các domain cụ thể
-const allowedOrigins = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(',')
-  : ['http://localhost:3000', 'https://demo.clow.fun'];
+// Thiết lập CORS - chỉ cho phép domain https://demo.clow.fun/
+const allowedOrigins = ['https://demo.clow.fun'];
 
 app.use(cors({
   origin: function(origin, callback) {
-    if (!origin) return callback(null, true);
+    if (!origin) return callback(null, true); // Cho phép yêu cầu không có origin (ví dụ: từ Postman)
     if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'Đừng cố tìm cách nữa anh bạn à.';
+      const msg = 'Domain không được phép truy cập.';
       return callback(new Error(msg), false);
     }
     return callback(null, true);
