@@ -3,12 +3,14 @@ const express = require('express');
 const cors = require('cors');
 const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
+const axios = require('axios');
+
 const app = express();
 
 // Thiết lập CORS - chỉ cho phép các domain cụ thể
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',')
-  : ['http://localhost:3000'];
+  : ['http://localhost:3000', 'https://demo.clow.fun'];
 
 app.use(cors({
   origin: function(origin, callback) {
@@ -49,7 +51,7 @@ app.post('/api/encrypt', (req, res) => {
   if (!data) {
     return res.status(400).json({ error: 'Thiếu dữ liệu cần mã hóa' });
   }
-
+  
   try {
     const iv = crypto.randomBytes(16);
     const cipher = crypto.createCipheriv('aes-128-cbc', Buffer.from(SECRET_KEY), iv);
@@ -60,13 +62,13 @@ app.post('/api/encrypt', (req, res) => {
       .replace(/\+/g, "-")
       .replace(/\//g, "_")
       .replace(/=+$/, "");
-    
+      
     const encryptedBase64 = encrypted
       .replace(/\+/g, "-")
       .replace(/\//g, "_")
       .replace(/=+$/, "");
-    
-    return res.json({ 
+      
+    return res.json({
       encodedLink: `${ivBase64}.${encryptedBase64}`
     });
   } catch (error) {
@@ -82,7 +84,7 @@ app.post('/api/concunhonho', (req, res) => {
   if (!encryptedData) {
     return res.status(400).json({ error: 'Thiếu dữ liệu cần giải mã' });
   }
-
+  
   try {
     const parts = encryptedData.split(".");
     if (parts.length !== 2) {
@@ -106,6 +108,19 @@ app.post('/api/concunhonho', (req, res) => {
   } catch (error) {
     console.error('Lỗi giải mã:', error);
     return res.status(500).json({ error: 'Lỗi khi giải mã dữ liệu' });
+  }
+});
+
+// API endpoint để bao bọc API Google Sheet
+app.get('/api/phim-le', async (req, res) => {
+  try {
+    const response = await axios.get('https://script.google.com/macros/s/AKfycbyXpNgnwvaN6baRAChhT1J4asIthVxQlsWzxMPvfuEGMHEOiToP5uhfN3jvg6XMf12I5A/exec?path=danh-sach/phim-le');
+    
+    // Trả về dữ liệu từ Google Sheet
+    return res.json(response.data);
+  } catch (error) {
+    console.error('Lỗi khi gọi API Google Sheet:', error);
+    return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu phim lẻ' });
   }
 });
 
