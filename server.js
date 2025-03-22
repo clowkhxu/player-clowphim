@@ -112,7 +112,7 @@ app.post('/api/concunhonho', (req, res) => {
     return res.json({ decryptedUrl: decrypted });
   } catch (error) {
     console.error('Lỗi giải mã:', error);
-    return res.status(500).json({ error: 'Lỗi khi giải mã dữ liệu' });
+    return res.status(500).json({ error: '' });
   }
 });
 
@@ -154,9 +154,9 @@ app.get('/api/phim-bo', async (req, res) => {
 // Middleware kiểm tra CORS cho endpoint phim
 const corsForPhim = (req, res, next) => {
   const origin = req.headers.origin;
-  if (!origin) return res.status(403).json({ error: 'Không có origin' }); // Không có origin
+  if (!origin) return res.status(403).json({ error: '' }); // Không có origin
   if (allowedOrigins.indexOf(origin) === -1) {
-    return res.status(403).json({ error: 'Domain không được phép truy cập.' }); // Domain không hợp lệ
+    return res.status(403).json({ error: '' }); // Domain không hợp lệ
   }
   next(); // Cho phép tiếp tục nếu domain hợp lệ
 };
