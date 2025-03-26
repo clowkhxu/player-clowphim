@@ -13,7 +13,7 @@ app.set('trust proxy', true);
 
 // Thiết lập CORS - chỉ cho phép các domain cụ thể
 const allowedOrigins = [
-  'https://clowdeptrai.vercel.app',
+  'https://thanhdatflix.vercel.app',
   'https://rcp-clowphim.blogspot.com'
 ];
 
